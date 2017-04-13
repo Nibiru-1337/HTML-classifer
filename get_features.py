@@ -228,7 +228,7 @@ if __name__ == '__main__':
             text = soup.get_text('\n').lower()
 
             # DEBUG CONSOLE OUTPUT
-            debug_out_to_console(soup, text)
+            #debug_out_to_console(soup, text)
 
             # TEST CREATING FEATURE FILE
-            #create_feature_file(soup, text, tag)
+            create_feature_file(soup, text, tag)
