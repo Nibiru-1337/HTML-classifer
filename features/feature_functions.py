@@ -1,18 +1,7 @@
 import re
-from os import listdir, getcwd
-from os.path import isfile, join
+
 from inspect import isfunction
 from urllib import parse
-from bs4 import BeautifulSoup
-
-TAGS = {'FORUM': 0, 'FORUM FORUM_MAIN': 1, 'FORUM FORUM_SINGLE_COMMENT': 2, 'FORUM FORUM_THREAD': 3,
-        'HIGH_QUALITY_CONTENT ARTICLE': 4, 'NO_CONTENT CONTACT_PAGE': 5, 'NO_CONTENT FORM': 6, 'NO_CONTENT IN_FRAME': 7,
-        'NO_CONTENT NO_CONTENT': 7, 'OTHER_MULTIMEDIA_CONTENT APPLICATION': 8,
-        'OTHER_MULTIMEDIA_CONTENT IMAGE_GALLERY': 9, 'OTHER_MULTIMEDIA_CONTENT ITEM_WITHOUT_TEXT_DESC': 10,
-        'OTHER_MULTIMEDIA_CONTENT ITEMS_LIST': 11, 'OTHER_MULTIMEDIA_CONTENT OTHERS': 12,
-        'OTHER_MULTIMEDIA_CONTENT QUIZ': 13, 'OTHER_MULTIMEDIA_CONTENT VIDEO': 14,
-        'OTHER_TEXT_CONTENT ITEM_WITH_TEXT_DESC': 15, 'OTHER_TEXT_CONTENT ITEMS_LIST_WITH_TEXT_DESC': 16,
-        'OTHER_TEXT_CONTENT QUIZ': 17, 'OTHER_TEXT_CONTENT TABLE_DATA': 18}
 
 
 def fire_all_feature_functions(soup, text):
@@ -20,7 +9,7 @@ def fire_all_feature_functions(soup, text):
     # fire all functions from this script which start with 'feature'
     # they extract features and put output to feature list
     for obj in globals().values():
-        if isfunction(obj) and obj.__module__ == __name__ and obj.__name__.startswith('feature'):
+        if isfunction(obj) and obj.__module__ == __name__ and obj.__name__.startswith('_feature'):
             #print(obj)
             feature_list.append(str(obj(soup, text)))
 
@@ -28,55 +17,28 @@ def fire_all_feature_functions(soup, text):
 
 def debug_out_to_console(soup, text):
     # get number of "kontakt" occurances in text
-    print('kontakt count:' + str(feature_count_kontakt(soup, text)))
+    print('kontakt count:' + str(_feature_count_kontakt(soup, text)))
     # check if it contains phone number
-    print('Has phone #:' + str(feature_phone_number(soup, text)))
+    print('Has phone #:' + str(_feature_phone_number(soup, text)))
     # check if it has an <a> tag with href starting with "mailto:"
-    print('<a> with href \'mailto:\':' + str(feature_send_mail_anchor(soup, text)))
+    print('<a> with href \'mailto:\':' + str(_feature_send_mail_anchor(soup, text)))
     # check if it has opening hours format
-    print('opening hours:' + str(feature_opening_hours(soup, text)))
+    print('opening hours:' + str(_feature_opening_hours(soup, text)))
     # check if it has area code format
-    print('area code:' + str(feature_area_code(soup, text)))
+    print('area code:' + str(_feature_area_code(soup, text)))
     # check if street address occurs
-    print('street address:' + str(feature_street_adress(soup, text)))
+    print('street address:' + str(_feature_street_adress(soup, text)))
     # check if we have a reference to google maps api
-    print('google maps:' + str(feature_google_maps_ref(soup, text)))
+    print('google maps:' + str(_feature_google_maps_ref(soup, text)))
     # check if title has html status code format
-    print('error status code in title:' + str(feature_error_status_code_in_title(soup, text)))
+    print('error status code in title:' + str(_feature_error_status_code_in_title(soup, text)))
     # check if we have form tag
-    print('has form tag:' + str(feature_has_form_tag(soup, text)))
+    print('has form tag:' + str(_feature_has_form_tag(soup, text)))
     # check if it has an iframe with visible content
-    print('has iframe with content:' + str(feature_iframe_with_content_not_fb(soup, text)))
+    print('has iframe with content:' + str(_feature_iframe_with_content_not_fb(soup, text)))
 
-def create_feature_file(soup, text, tag=None):
-    # open file in appending mode
-    with open('features_train.txt', 'a') as out:
-        # fire all feature extracting functions
-        feature_list = fire_all_feature_functions(soup, text)
-        # append actual class at the end if we are creating a training file
-        if tag is not None:
-            feature_list.append(str(TAGS[tag]))
-        # separate with comma
-        out.write(','.join(feature_list))
-        # newline for new file
-        out.write('\n')
-
-def occurs_keywords(keywords, text):
-    for word in keywords:
-        if word in text:
-            return 1
-    return 0
-
-def count_keyword(keyword, text):
-    return text.count(keyword)
-
-def has_tag(tag, soup):
-    if soup.find(tag) is None:
-        return 0
-    else:
-        return 1
 #=====================================FEATURE FUNCTIONS(name starts with feature)======================================#
-def feature_phone_number(soup, text):
+def _feature_phone_number(soup, text):
     # regular exp matching (some?) phone number formats
     pattern = re.compile(r'''
     ((?:[^\w]|\s) # starts with not a word or whitespace
@@ -96,7 +58,7 @@ def feature_phone_number(soup, text):
         keywords = ['+48', '+44', 'telefon', '☎', '☏']
         return occurs_keywords(keywords, text)
 
-def feature_send_mail_anchor(soup, text):
+def _feature_send_mail_anchor(soup, text):
     atags = soup.findAll('a', {'href': True})
     for a in atags:
         # print("<a> href values: " + str(a['href']))
@@ -104,7 +66,7 @@ def feature_send_mail_anchor(soup, text):
             return 1
     return 0
 
-def feature_opening_hours(soup, text):
+def _feature_opening_hours(soup, text):
     # regular exp matching (some?) opening hours formats
     pattern = re.compile(r'''
     (?:[^\w]|\s)# starts with not a word or whitespace
@@ -126,7 +88,7 @@ def feature_opening_hours(soup, text):
     else:
         return 0
 
-def feature_area_code(soup, text):
+def _feature_area_code(soup, text):
     # regular exp matching (some?) opening area code formats
     pattern = re.compile(r'''
         ((?:[^\w]|\s)   # starts with not a word or whitespace
@@ -142,11 +104,11 @@ def feature_area_code(soup, text):
     else:
         return 0
 
-def feature_street_adress(soup, text):
+def _feature_street_adress(soup, text):
     keywords = ['ulica', 'ul.', 'aleja']
     return occurs_keywords(keywords, text)
 
-def feature_google_maps_ref(soup, text):
+def _feature_google_maps_ref(soup, text):
     for link in soup.find_all('a'):
         href = str(link.get('href'))
         # print(href)
@@ -154,7 +116,7 @@ def feature_google_maps_ref(soup, text):
             return 1
     return 0
 
-def feature_error_status_code_in_title(soup, text):
+def _feature_error_status_code_in_title(soup, text):
     # check if title has content
     if soup.title is None or len(soup.title.contents) == 0:
         return 0
@@ -174,7 +136,7 @@ def feature_error_status_code_in_title(soup, text):
     else:
         return 0
 
-def feature_iframe_with_content_not_fb(soup, text):
+def _feature_iframe_with_content_not_fb(soup, text):
     iframes = soup.findAll('iframe', {'src': True})
     for iframe in iframes:
         # print("<iframe> src values: " + str(iframe['src']))
@@ -195,40 +157,24 @@ def feature_iframe_with_content_not_fb(soup, text):
                 return 1
     return 0
 
-def feature_has_form_tag(soup, text):
+def _feature_has_form_tag(soup, text):
     return has_tag('form', soup)
 
-def feature_count_kontakt(soup, text):
+def _feature_count_kontakt(soup, text):
     return count_keyword('kontakt', text)
-#=====================================END FEATURE FUNCTIONS============================================================#
 
-if __name__ == '__main__':
+#============================================HELPER FUNCTIONS==========================================================#
+def occurs_keywords(keywords, text):
+    for word in keywords:
+        if word in text:
+            return 1
+    return 0
 
-    # get list of files in current directory
-    only_files = [f for f in listdir(getcwd()) if isfile(join(getcwd(), f))]
-    # remove python scripts and gitignore
-    only_files = [f for f in only_files if not f.endswith('.py') and not f.endswith('.gitignore')]
-    # for every file
-    for filename in only_files:
-        filepath = join(getcwd(), filename)
-        print('===================================================')
-        with open(filepath, 'r', encoding="utf8") as f:
-            # print current file
-            print('file:' + filename)
-            # read two first lines
-            tag = f.readline().strip()
-            url = f.readline()
-            # parse the HTML
-            soup = BeautifulSoup(f, 'html.parser')
-            # check if file is proper HTML
-            if soup.head is None or soup.body is None:
-                print('This shit ain\'t even HTML!')
-                continue
-            # standardize the website text content to lowercase
-            text = soup.get_text('\n').lower()
+def count_keyword(keyword, text):
+    return text.count(keyword)
 
-            # DEBUG CONSOLE OUTPUT
-            #debug_out_to_console(soup, text)
-
-            # TEST CREATING FEATURE FILE
-            create_feature_file(soup, text, tag)
+def has_tag(tag, soup):
+    if soup.find(tag) is None:
+        return 0
+    else:
+        return 1

@@ -1,6 +1,9 @@
 import pickle
-from get_features import TAGS
+
 from sklearn import tree
+
+from features.extraction import TAGS
+
 
 class DecisionTree:
 
