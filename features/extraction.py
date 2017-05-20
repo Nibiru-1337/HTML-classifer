@@ -19,35 +19,20 @@ MAIN_TAGS = {'HIGH_QUALITY_CONTENT': 0, 'FORUM': 1, 'NO_CONTENT': 2, 'OTHER_TEXT
              'OTHER_MULTIMEDIA_CONTENT': 4, 'UNKNOWN': 5, 'ITEM_WITH_TEXT_DESC': 6}
 
 
-def create_feature_file(soup, text, tag=None):
-    # check if we are creating a training file or not
+def add_line_to_feature_file(soup, text, out, tag=None):
+    # fire all feature extracting functions
+    feature_list = ff.fire_all_feature_functions(soup, text)
+    # append actual class at the end if we are creating a training file
     if tag is not None:
-        file = join(DEFAULT_TRAINING_PATH, 'features_train.txt')
-    else:
-        file = join(DEFAULT_TRAINING_PATH, 'features.txt')
+        # TODO: TAGS OR MAIN_TAGS ?
+        # feature_list.append(str(MAIN_TAGS[tag]))
+        feature_list.append(str(SECONDARY_TAGS[tag]))
+    # separate with comma
+    out.write(','.join(feature_list))
+    # newline for new file
+    out.write('\n')
 
-    # open file in appending mode
-    with open(file, 'a') as out:
-        # fire all feature extracting functions
-        feature_list = ff.fire_all_feature_functions(soup, text)
-        # append actual class at the end if we are creating a training file
-        if tag is not None:
-            # TODO: TAGS OR MAIN_TAGS ?
-            #feature_list.append(str(MAIN_TAGS[tag]))
-            feature_list.append(str(SECONDARY_TAGS[tag]))
-        # separate with comma
-        out.write(','.join(feature_list))
-        # newline for new file
-        out.write('\n')
-
-
-def extract():
-    # clear feature files
-    with open(join(DEFAULT_TRAINING_PATH, 'features_train.txt'), "w"):
-        pass
-    with open(join(DEFAULT_TRAINING_PATH, 'features.txt'), "w"):
-        pass
-
+def iterate_over_dataset(out):
     # get list of files in data set
     path_to_dataset = join(getcwd(), 'data_set')
     only_files = [f for f in listdir(path_to_dataset) if isfile(join(path_to_dataset, f))]
@@ -61,7 +46,7 @@ def extract():
             print('file:' + filename)
             # read two first lines
             # TODO: TAGS OR MAIN_TAGS ?
-            #tag = f.readline().strip().split(' ')[0]
+            # tag = f.readline().strip().split(' ')[0]
             tag = f.readline().strip()
             url = f.readline()
             # parse the HTML
@@ -77,7 +62,19 @@ def extract():
             ff.debug_out_to_console(soup, text)
 
             # TEST CREATING FEATURE FILE
-            create_feature_file(soup, text, tag)
+            add_line_to_feature_file(soup, text, out, tag)
+
+
+def extract(train=True):
+    # open proper feature file
+    if train:
+        with open(join(DEFAULT_TRAINING_PATH, 'features_train.txt'), "w") as out:
+            iterate_over_dataset(out)
+    else:
+        with open(join(DEFAULT_TRAINING_PATH, 'features.txt'), "w"):
+            pass
+
+
 
 
 if __name__ == '__main__':

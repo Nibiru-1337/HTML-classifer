@@ -38,8 +38,10 @@ def debug_out_to_console(soup, text):
     print('has iframe with content:' + str(_feature_iframe_with_content_not_fb(soup, text)))
     # check how many p tags
     print('num of p tags:' + str(_feature_count_paragraphs(soup, text)))
-    # check how long website text is
-    #print('text len:' + str(_feature_how_much_text(soup, text)))
+    # check how many table tags
+    print('num of table tags:' + str(_feature_count_table(soup, text)))
+    # check how many radio buttons
+    print('num of radio buttons:' + str(_feature_count_radio_buttons(soup, text)))
 #=====================================FEATURE FUNCTIONS(name starts with feature)======================================#
 def _feature_phone_number(soup, text):
     # regular exp matching (some?) phone number formats
@@ -169,8 +171,11 @@ def _feature_count_kontakt(soup, text):
 def _feature_count_paragraphs(soup, text):
     return count_tag('p', soup)
 
-#def _feature_how_much_text(soup, text):
-#    return len(text)
+def _feature_count_table(soup, text):
+    return count_tag('table', soup)
+
+def _feature_count_radio_buttons(soup, text):
+    return len(soup.find_all('input', {'type': 'radio'}))
 
 
 
