@@ -30,6 +30,7 @@ def train(train_file=DEFAULT_TRAINING_PATH):
     tree = DecisionTree()
     tree.train(training_data[0], training_data[1])
     tree.save(DEFAULT_TREE_PATH)
+
 def validate(train_file=DEFAULT_TRAINING_PATH):
     # validate accuracy
     training_data = read_training_data(train_file)

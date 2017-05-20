@@ -30,4 +30,3 @@ if __name__ == '__main__':
             classifier.validate()
         elif command.startswith('c'):
             pass
-

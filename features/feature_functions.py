@@ -36,7 +36,10 @@ def debug_out_to_console(soup, text):
     print('has form tag:' + str(_feature_has_form_tag(soup, text)))
     # check if it has an iframe with visible content
     print('has iframe with content:' + str(_feature_iframe_with_content_not_fb(soup, text)))
-
+    # check how many p tags
+    print('num of p tags:' + str(_feature_count_paragraphs(soup, text)))
+    # check how long website text is
+    #print('text len:' + str(_feature_how_much_text(soup, text)))
 #=====================================FEATURE FUNCTIONS(name starts with feature)======================================#
 def _feature_phone_number(soup, text):
     # regular exp matching (some?) phone number formats
@@ -163,6 +166,14 @@ def _feature_has_form_tag(soup, text):
 def _feature_count_kontakt(soup, text):
     return count_keyword('kontakt', text)
 
+def _feature_count_paragraphs(soup, text):
+    return count_tag('p', soup)
+
+#def _feature_how_much_text(soup, text):
+#    return len(text)
+
+
+
 #============================================HELPER FUNCTIONS==========================================================#
 def occurs_keywords(keywords, text):
     for word in keywords:
@@ -178,3 +189,6 @@ def has_tag(tag, soup):
         return 0
     else:
         return 1
+
+def count_tag(tag, soup):
+    return len(soup.find_all(tag))

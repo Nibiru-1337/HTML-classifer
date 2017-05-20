@@ -2,11 +2,10 @@ import pickle
 
 from sklearn import tree
 
-from features.extraction import TAGS
+from features.extraction import SECONDARY_TAGS as TAGS
 
 
 class DecisionTree:
-
     def __init__(self):
         self.classifier = tree.DecisionTreeClassifier()
 
@@ -33,7 +32,10 @@ class DecisionTree:
                 if results[idx] == Y[idx]:
                     correct += 1
             # display group accuracy
-            print(str(tag) + ' accuracy: ' + str(float(correct) / float(count_of_class)))
+            if len(group) == 0 and count_of_class == 0:
+                print(str(tag) + ' accuracy: 1.0 (none)')
+            else:
+                print(str(tag) + ' accuracy: ' + str(float(correct) / float(count_of_class)))
 
         return results
 
