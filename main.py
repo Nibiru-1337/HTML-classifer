@@ -4,7 +4,7 @@ import classifier.classifier as classifier
 def print_menu():
     print('=========================================')
     print('Menu:')
-    print('(default paths: classifier/features_train.txt, classifier/tree.pck)')
+    print('(default paths: classifier/features.txt, classifier/tree.pck, classifier/results.txt)')
     print('xtrain - extract features from files in data_set folder for training and validating')
     print('x - extract features from files in data_set folder for classifying')
     print('t - train tree from features file')

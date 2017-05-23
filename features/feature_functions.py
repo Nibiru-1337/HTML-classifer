@@ -181,6 +181,9 @@ def _feature_count_radio_buttons(soup, text):
 def _feature_count_image(soup, text):
     return len(soup.find_all('img'))
 
+def _feature_count_lists(soup, text):
+    return len(soup.find_all('ul')) + len(soup.find_all('ol'))
+
 #============================================HELPER FUNCTIONS==========================================================#
 def occurs_keywords(keywords, text):
     for word in keywords:

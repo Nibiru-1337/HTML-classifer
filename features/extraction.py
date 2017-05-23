@@ -24,9 +24,9 @@ def add_line_to_feature_file(soup, text, out, tag):
     feature_list = ff.fire_all_feature_functions(soup, text)
     # append actual class at the end if we are creating a training file
     if tag is not None:
-        # TODO: TAGS OR MAIN_TAGS ?
+        # TODO: MAIN_TAGS OR SECONDARY_TAGS ?
         feature_list.append(str(MAIN_TAGS[tag]))
-        # feature_list.append(str(SECONDARY_TAGS[tag]))
+        #feature_list.append(str(SECONDARY_TAGS[tag]))
     # separate with comma
     out.write(','.join(feature_list))
     # newline for new file
@@ -45,18 +45,18 @@ def iterate_over_dataset(out, train):
         with open(filepath, 'r', encoding="utf8") as f:
             # print current file
             print('file:' + filename)
-            # read the first line
-            url = f.readline()
             # if training read tag
             tag = None
-            if (train):
-                tag = f.readline()
+            if train:
+                #TODO: MAIN_TAGS OR SECONDARY_TAGS ?
+                tag = f.readline().split(' ')[0].strip()
+                #tag = f.readline().strip()
+            # read the url line
+            url = f.readline().strip()
+
             # parse the HTML
             soup = BeautifulSoup(f, 'html.parser')
-            # check if file is proper HTML
-            if soup.head is None or soup.body is None:
-                print('This ain\'t even HTML!')
-                continue
+
             # standardize the website text content to lowercase
             text = soup.get_text('\n').lower()
 

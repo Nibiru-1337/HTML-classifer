@@ -40,7 +40,14 @@ class DecisionTree:
         return results
 
     def classify(self, X):
-        return self.classifier.predict(X)
+        # return tag string not int
+        int_tags = self.classifier.predict(X)
+        string_tags = []
+        for int_tag in int_tags:
+            for tag, integer in TAGS.items():
+                if int_tag == integer:
+                    string_tags.append(tag)
+        return string_tags
 
     def save(self, path):
         pickle.dump(self.classifier, open(path, 'wb'))
