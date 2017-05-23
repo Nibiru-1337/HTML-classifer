@@ -2,7 +2,7 @@ import pickle
 
 from sklearn import tree
 
-from features.extraction import SECONDARY_TAGS as TAGS
+from features.extraction import MAIN_TAGS as TAGS
 
 
 class DecisionTree:
@@ -38,6 +38,9 @@ class DecisionTree:
                 print(str(tag) + ' accuracy: ' + str(float(correct) / float(count_of_class)))
 
         return results
+
+    def classify(self, X):
+        return self.classifier.predict(X)
 
     def save(self, path):
         pickle.dump(self.classifier, open(path, 'wb'))

@@ -12,7 +12,6 @@ def fire_all_feature_functions(soup, text):
         if isfunction(obj) and obj.__module__ == __name__ and obj.__name__.startswith('_feature'):
             #print(obj)
             feature_list.append(str(obj(soup, text)))
-
     return feature_list
 
 def debug_out_to_console(soup, text):
@@ -42,6 +41,8 @@ def debug_out_to_console(soup, text):
     print('num of table tags:' + str(_feature_count_table(soup, text)))
     # check how many radio buttons
     print('num of radio buttons:' + str(_feature_count_radio_buttons(soup, text)))
+    # check how many image tags
+    print('num of img tags:' + str(_feature_count_image(soup, text)))
 #=====================================FEATURE FUNCTIONS(name starts with feature)======================================#
 def _feature_phone_number(soup, text):
     # regular exp matching (some?) phone number formats
@@ -177,7 +178,8 @@ def _feature_count_table(soup, text):
 def _feature_count_radio_buttons(soup, text):
     return len(soup.find_all('input', {'type': 'radio'}))
 
-
+def _feature_count_image(soup, text):
+    return len(soup.find_all('img'))
 
 #============================================HELPER FUNCTIONS==========================================================#
 def occurs_keywords(keywords, text):
