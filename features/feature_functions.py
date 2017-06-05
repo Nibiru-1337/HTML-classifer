@@ -93,7 +93,8 @@ def _feature_opening_hours(soup, text):
         return 1
     else:
         return 0
-
+#BAYES
+#REGRSJA
 def _feature_area_code(soup, text):
     # regular exp matching (some?) opening area code formats
     pattern = re.compile(r'''

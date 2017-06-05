@@ -32,22 +32,26 @@ class DecisionTree:
                 if results[idx] == Y[idx]:
                     correct += 1
             # display group accuracy
-            if len(group) == 0 and count_of_class == 0:
+            if count_of_class == 0:
                 print(str(tag) + ' accuracy: 1.0 (none)')
             else:
                 print(str(tag) + ' accuracy: ' + str(float(correct) / float(count_of_class)))
 
-        return results
+        return self._int_to_tag(results)
 
     def classify(self, X):
         # return tag string not int
         int_tags = self.classifier.predict(X)
+        return self._int_to_tag(int_tags)
+
+    def _int_to_tag(self, int_tags):
         string_tags = []
         for int_tag in int_tags:
             for tag, integer in TAGS.items():
                 if int_tag == integer:
                     string_tags.append(tag)
         return string_tags
+
 
     def save(self, path):
         pickle.dump(self.classifier, open(path, 'wb'))

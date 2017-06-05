@@ -42,7 +42,7 @@ def iterate_over_dataset(out, train):
     for filename in only_files:
         filepath = join(path_to_dataset, filename)
         print('===================================================')
-        with open(filepath, 'r', encoding="utf8") as f:
+        with open(filepath, 'r') as f:
             # print current file
             print('file:' + filename)
             # if training read tag
