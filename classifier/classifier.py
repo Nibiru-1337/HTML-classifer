@@ -1,5 +1,5 @@
 import csv
-from os.path import join
+from os.path import join, isfile
 from os import getcwd
 
 from classifier.DecisionTree import DecisionTree
@@ -42,9 +42,14 @@ def train(train_file=DEFAULT_TRAINING_PATH):
     tree.save(DEFAULT_TREE_PATH)
 
 def validate(train_file=DEFAULT_TRAINING_PATH):
+    # check if tree file exists
+    if not isfile(DEFAULT_TREE_PATH):
+        print('There is no decision tree file!')
+        return
     # validate accuracy
     training_data = read_training_data(train_file)
     tree = DecisionTree()
+
     tree.load(DEFAULT_TREE_PATH)
     results = tree.validate(training_data[0], training_data[1])
     with open(DEFAULT_RESULTS_PATH, 'w') as outfile:
@@ -52,9 +57,12 @@ def validate(train_file=DEFAULT_TRAINING_PATH):
             outfile.write("%s\n" % item)
 
 def classify(features_file=DEFAULT_CLASSIFY_PATH):
+    if not isfile(features_file):
+        print('Error !\nExtract features first!')
+        return
     data = read_data(features_file)
     if len(data) == 0:
-        print('Error !\n Extract features first!')
+        print('Error !\nExtract features first!')
         return
     tree = DecisionTree()
     tree.load(DEFAULT_TREE_PATH)

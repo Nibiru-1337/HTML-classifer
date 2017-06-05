@@ -26,7 +26,7 @@ def add_line_to_feature_file(soup, text, out, tag):
     if tag is not None:
         # TODO: MAIN_TAGS OR SECONDARY_TAGS ?
         feature_list.append(str(MAIN_TAGS[tag]))
-        #feature_list.append(str(SECONDARY_TAGS[tag]))
+        # feature_list.append(str(SECONDARY_TAGS[tag]))
     # separate with comma
     out.write(','.join(feature_list))
     # newline for new file
@@ -42,29 +42,32 @@ def iterate_over_dataset(out, train):
     for filename in only_files:
         filepath = join(path_to_dataset, filename)
         print('===================================================')
-        with open(filepath, 'r') as f:
-            # print current file
-            print('file:' + filename)
-            # if training read tag
-            tag = None
-            if train:
-                #TODO: MAIN_TAGS OR SECONDARY_TAGS ?
-                tag = f.readline().split(' ')[0].strip()
-                #tag = f.readline().strip()
-            # read the url line
-            url = f.readline().strip()
-
-            # parse the HTML
-            soup = BeautifulSoup(f, 'html.parser')
-
-            # standardize the website text content to lowercase
-            text = soup.get_text('\n').lower()
-
-            # DEBUG CONSOLE OUTPUT
-            # ff.debug_out_to_console(soup, text)
-
-            # TEST CREATING FEATURE FILE
-            add_line_to_feature_file(soup, text, out, tag)
+        enc = None
+        while True:
+            try:
+                with open(filepath, 'r', encoding=enc) as f:
+                    # print current file
+                    print('file:' + filename)
+                    # if training read tag
+                    tag = None
+                    if train:
+                        # TODO: MAIN_TAGS OR SECONDARY_TAGS ?
+                        tag = f.readline().split(' ')[0].strip()
+                        # tag = f.readline().strip()
+                    # read the url line
+                    url = f.readline().strip()
+                    # parse the HTML
+                    soup = BeautifulSoup(f, 'html.parser')
+                    # standardize the website text content to lowercase
+                    text = soup.get_text('\n').lower()
+                    # DEBUG CONSOLE OUTPUT
+                    ff.debug_out_to_console(soup, text)
+                    # TEST CREATING FEATURE FILE
+                    add_line_to_feature_file(soup, text, out, tag)
+                    break
+            except UnicodeDecodeError:
+                enc = 'UTF-8'
+                continue
 
 
 def extract(train):
